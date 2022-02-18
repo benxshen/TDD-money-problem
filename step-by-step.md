@@ -89,11 +89,48 @@ List of Features to implement :
 
 ```shell
 dotnet new xunit -n "money-problem"
-```
-
-* Try to run tests :
-
-```shell
 dotnet test
 ```
 
+* Write our first test for
+  * `5 USD x 2 = 10 USD`
+  * This code does not compile
+  * Congrats here is our failing test
+
+```c#
+public class TestMoney
+{
+    [Fact]
+    public void TestMultiplication()
+    {
+        var fiver = new Dollar(5);
+        var tenner = fiver.Times(2);
+
+        tenner.Amount.Should().Be(10);
+    }
+}
+```
+
+### Going for Green
+* We wrote our tests as we would expect them to work
+* Start with the smallest bit of code that sets up on the path to progress
+  * Add an abstraction `Dollar`
+  * Use IDE for that
+
+```c#
+public record Dollar(int Amount)
+{
+    public Dollar Times(int multiplier) => new(10);
+}
+```
+
+### Cleaning Up
+* Just enough code to make the test pass
+* Remove hardcoded values
+
+```c#
+public record Dollar(int Amount)
+{
+    public Dollar Times(int multiplier) => new(Amount * multiplier);
+}
+```
