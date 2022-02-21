@@ -13,9 +13,24 @@ class MoneyTest extends org.scalatest.funsuite.AnyFunSuite {
     val originalMoney = Money(4002, "KRW")
     assert(originalMoney.divide(4) === Money(1000.5, "KRW"))
   }
+}
 
-  case class Money(amount: Double, currency: String) {
-    def times(multiplier: Int): Money = copy(amount = amount * multiplier)
-    def divide(divisor: Int) = copy(amount = amount / divisor)
+class PortfolioTest extends org.scalatest.funsuite.AnyFunSuite {
+  test("5 USD + 10 USD = 15 USD") {
+    val fiveDollars = Money(5, "USD")
+    val tenDollars = Money(10, "USD")
+    val portfolio = Portfolio(fiveDollars, tenDollars)
+
+    assert(portfolio.Evaluate("USD") === Money(15, "USD"))
   }
+}
+
+case class Money(amount: Double, currency: String) {
+  def times(multiplier: Int): Money = copy(amount = amount * multiplier)
+  def divide(divisor: Int) = copy(amount = amount / divisor)
+}
+
+case class Portfolio(moneys: Money*) {
+  def Evaluate(currency: String): Money =
+    Money(moneys.foldLeft(0d)((acc, money) => acc + money.amount), currency)
 }
