@@ -819,3 +819,23 @@ public void AddWithMissingExchangeRatesShouldThrowGreedyException()
         .WithMessage("Missing exchange rate(s): [EUR->KRW]");
 } 
 ```
+
+#### Where we are
+* We have added error handling
+  * Portfolio evaluation is not simple anymore
+    * Clumsy code to check if we have missing exchange rates
+  * Let's add a new feature in our list
+```text
+✅ 5 USD x 2 = 10 USD 
+✅ 10 EUR x 2 = 20 EUR
+✅ 4002 KRW / 4 = 1000.5 KRW
+✅ 5 USD + 10 USD = 15 USD
+✅ Separate test code from production code
+✅ Remove redundant tests
+✅ 5 USD + 10 EUR = 17 USD
+✅ 1 USD + 1100 KRW = 2200 KRW
+✅ Determine exchange rate based on the currencies involved (from -> to)
+✅ Improve error handling when exchange rates are unspecified
+
+Allow exchange rates to be modified
+```
