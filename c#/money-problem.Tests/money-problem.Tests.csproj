@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\money-problem.Domain\money-problem.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

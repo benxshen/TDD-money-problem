@@ -1,4 +1,4 @@
-namespace money_problem.Tests
+namespace money_problem.Domain
 {
     public enum Currency
     {

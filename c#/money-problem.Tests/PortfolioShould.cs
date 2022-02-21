@@ -1,4 +1,5 @@
 using FluentAssertions;
+using money_problem.Domain;
 using Xunit;
 
 namespace money_problem.Tests;
@@ -8,7 +9,7 @@ public class PortfolioShould
     public class TestPortfolio
     {
         [Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
-        public void Addition()
+        public void Add()
         {
             var fiveDollars = new Money(5, Currency.USD);
             var tenDollars = new Money(10, Currency.USD);

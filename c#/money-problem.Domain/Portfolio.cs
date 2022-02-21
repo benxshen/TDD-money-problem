@@ -1,6 +1,4 @@
-using System.Linq;
-
-namespace money_problem.Tests
+namespace money_problem.Domain
 {
     public record Portfolio(params Money[] Moneys)
     {

@@ -472,7 +472,7 @@ We have written 2 types of code :
   * `Should we keep both the multiplication tests ?`
 
 #### Checklist for cleaning tests :
-- [ ] Would we have the same code coverage if we delete a tests ?
+- [ ] Would we have the same code coverage if we delete a test ?
 - [ ] Does one of the tests verify a significant edge case ?
 - [ ] Do the different tests provide unique value as a `living documentation` ?
 
@@ -514,7 +514,39 @@ money-problem
   * Create a folder for `money-problem.Tests`
     * Move actual files in this folder
   * Add the existing project `money-problem.Tests` to the solution
-* Create a new project ()
-  * money-problem.Domain
-  * Before it we need to restructure our existing code
-    * Create a folder
+* Create a new project (`Class Library`)
+  * Name it `money-problem.Domain`
+  * Move `Domain entities` to it
+  * Our tests are now `Red`
+    * Add dependency to the `Domain` project in the `Tests` project
+    * Dependency is unidirectional so we can not reference test objects from our `production code`
+
+```
+money-problem   
+│─── money-problem.Domain
+│        │─── Currency.cs
+│        │─── Money.cs    
+│        │─── Portfolio.cs
+│─── money-problem.Tests
+│        │─── MoneyShould.cs
+│        │─── PortfolioShould.cs
+```
+
+#### Fix our tests
+* Our tests are not compiling anymore
+* We need to fix `usings` in our tests : 
+```c#
+using money_problem.Domain;
+```
+
+#### Remove Redundancy in Tests
+* We have 2 tests on multiplication
+  * The 2 tests test the same functionality and does not provide any added-value according to our check-list :
+
+- [X] Would we have the same code coverage if we delete a tests ?
+- [ ] Does one of the tests verify a significant edge case ?
+- [ ] Do the different tests provide unique value as a `living documentation` ?
+
+* Delete the `MultiplyInDollars`
+  * Rename the tests to represent the features under tests :
+  * Add / Divide / Multiply
