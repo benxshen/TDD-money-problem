@@ -791,8 +791,8 @@ private void CheckExchangeRates(Currency toCurrency)
 ```c#
 public class MissingExchangeRatesException : Exception
 {
-    public MissingExchangeRatesException(string[] missingCurrencies)
-        : base($"Missing exchange rate(s): [{string.Join(",", missingCurrencies)}]")
+    public MissingExchangeRatesException(string[] missingExchangeRates)
+        : base($"Missing exchange rate(s): [{string.Join(",", missingExchangeRates)}]")
     {
     }
 }
@@ -836,6 +836,6 @@ public void AddWithMissingExchangeRatesShouldThrowGreedyException()
 ✅ 1 USD + 1100 KRW = 2200 KRW
 ✅ Determine exchange rate based on the currencies involved (from -> to)
 ✅ Improve error handling when exchange rates are unspecified
-
+Improve the implementation of exchange rates
 Allow exchange rates to be modified
 ```
