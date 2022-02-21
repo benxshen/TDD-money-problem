@@ -550,3 +550,15 @@ using money_problem.Domain;
 * Delete the `MultiplyInDollars`
   * Rename the tests to represent the features under tests :
   * Add / Divide / Multiply
+
+#### Update our feature list
+```text
+✅ 5 USD x 2 = 10 USD 
+✅ 10 EUR x 2 = 20 EUR
+✅ 4002 KRW / 4 = 1000.5 KRW
+✅ 5 USD + 10 USD = 15 USD
+✅ Separate test code from production code
+✅ Remove redundant tests
+5 USD + 10 EUR = 17 USD
+1 USD + 1100 KRW = 2200 KRW
+```
