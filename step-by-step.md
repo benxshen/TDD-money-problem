@@ -1,6 +1,12 @@
 # Learning Test-Driven Development (TDD)
-* Workshop to learn TDD step-by-step from Saleem Siddiqui's book : [Learning Test-Driven Development](https://www.oreilly.com/library/view/learning-test-driven-development/9781098106461/)
-* In this md file you will find code samples in C#
+* Workshop to learn TDD step-by-step from [Saleem Siddiqui](https://www.linkedin.com/in/ssiddiqui/) 's book : 
+  * [Learning Test-Driven Development](https://www.oreilly.com/library/view/learning-test-driven-development/9781098106461/)
+    * The book explains the different concepts in 3 languages : Go, Python, JS
+    * Thanks Saleem for your great sharing
+* You will find other languages in this repository : `C#`, `scala`
+  * I have chosen to make a step-by-step guide from the book in `C#`
+  
+[![img/Learning-Test-Driven-Development.jpg](img/Learning-Test-Driven-Development.jpg)](https://www.oreilly.com/library/view/learning-test-driven-development/9781098106461/)
 
 ## What is TDD
 TDD is a technique borne of a set of beliefs about code :  
@@ -431,3 +437,61 @@ public record Portfolio(params Money[] Moneys)
 5 USD + 10 EUR = 17 USD
 1 USD + 1100 KRW = 2200 KRW
 ```
+
+## Part 2 - Modularization
+### Chapter 4 - Separation of Concerns
+* Our source code has grown
+* Let's spend some time organizing it
+
+#### Test and Production Code
+We have written 2 types of code :
+1. Code that `solves` our `Money` problem
+  * Including `Money` / `Portfolio`
+  * We call this `production code`
+2. Code that `verifies the problem is correctly solved`
+   * Including all the tests and the code needed to support these tests
+   * We call this `test code`
+
+`Test code depends on production code, however there should be no dependency in the other direction`
+
+#### Packaging and Deployment
+`Test code should be packaged separately from production code so that they can be deployed independently via CI/CD pipeline`
+* Modularization
+  * Let's separate the test code from the production code
+* This means :
+  * Test and production code should be in separate files
+    * Allows to read / edit / focus on test or production code independently
+  * The code should use namespaces to clearly identify which entities belong together
+    * A namespace may be called a "module" or "package'
+  * Add explicit `import` in our test code
+
+#### Removing redundancy
+* We have had 2 multiplication tests
+  * They test the same functionality
+  * In contrast we have only one test for division
+  * `Should we keep both the multiplication tests ?`
+
+#### Checklist for cleaning tests :
+- [ ] Would we have the same code coverage if we delete a tests ?
+- [ ] Does one of the tests verify a significant edge case ?
+- [ ] Do the different tests provide unique value as a `living documentation` ?
+
+#### Update our feature list
+```text
+✅ 5 USD x 2 = 10 USD 
+✅ 10 EUR x 2 = 20 EUR
+✅ 4002 KRW / 4 = 1000.5 KRW
+✅ 5 USD + 10 USD = 15 USD
+Separate test code from production code
+Remove redundant tests
+5 USD + 10 EUR = 17 USD
+1 USD + 1100 KRW = 2200 KRW
+```
+
+The steps of separation of concerns vary from language to language. Saleem has dedicated 3 chapters in his boook on this topic :
+* Chapter 5, "Packages and Modules in Go"
+* Chapter 6, "Modules in Javascript"
+* Chapter 7, "Modules in Python"
+
+I propose here how I would do that in C#.
+
