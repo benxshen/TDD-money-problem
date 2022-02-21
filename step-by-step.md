@@ -7,7 +7,7 @@ TDD is a technique borne of a set of beliefs about code :
 
 * Simplicity - the art of maximizing the amount of work *not* done
 * Obviousness and clarity are more virtuous than cleverness
-* Writing uncluterred code is a key component of being successful
+* Writing uncluttered code is a key component of being successful
 
 `Test-Driven Development is a way of managing fear during programming - Kant Beck`
 
@@ -135,7 +135,7 @@ public record Dollar(int Amount)
 }
 ```
 
-### Chapter 2 - Multicurrency Money
+### Chapter 2 - Multi-currency Money
 * Second item in our feature list : `10 EUR x 2 = 20 EUR`
 * We need a more general concept than `Dollar`
     * Money for example 
@@ -312,5 +312,19 @@ public void Division()
         .Should()
         .Be(new Money(1000.5, Currency.KRW));
 }
-}
+```
+
+#### Where we are ?
+* We built a second feature : `division`
+* We changed our design to deal with numbers with fractions
+* We have a couple of passing tests
+* We have introduced a `Money` entity to deal with various currencies
+* We cleaned our code along the way
+
+```text
+✅ 5 USD x 2 = 10 USD 
+✅ 10 EUR x 2 = 20 EUR
+✅ 4002 KRW / 4 = 1000.5 KRW
+5 USD + 10 EUR = 17 USD
+1 USD + 1100 KRW = 2200 KRW
 ```
