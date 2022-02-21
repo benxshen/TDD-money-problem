@@ -495,3 +495,26 @@ The steps of separation of concerns vary from language to language. Saleem has d
 
 I propose here how I would do that in C#.
 
+### Chapter "custom" Projects and namespaces in C#
+#### Splitting Our Code into Classes
+* Start our separation of concerns by splitting our file into distinct Classes
+```
+money-problem
+│─── Currency.cs
+│─── Money.cs    
+│─── Portfolio.cs
+│─── MoneyShould.cs
+│─── PortfolioShould.cs
+```
+
+#### Separate Production code and Test Code
+* Let's isolate our Test code by creating a new Project for `production code`
+* To do it, we have some prerequisites :
+  * Create an empty solution `money-problem`
+  * Create a folder for `money-problem.Tests`
+    * Move actual files in this folder
+  * Add the existing project `money-problem.Tests` to the solution
+* Create a new project ()
+  * money-problem.Domain
+  * Before it we need to restructure our existing code
+    * Create a folder
