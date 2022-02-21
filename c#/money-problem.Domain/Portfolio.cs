@@ -10,8 +10,25 @@ namespace money_problem.Domain
             {KeyFor(USD, KRW), 1100},
         };
 
-        public Money Evaluate(Currency currency) =>
-            new(Moneys.Aggregate(0d, (acc, money) => acc + Convert(money, currency)), currency);
+        public Money Evaluate(Currency toCurrency)
+        {
+            CheckExchangeRates(toCurrency);
+            return new Money(Moneys.Aggregate(0d, (acc, money) => acc + Convert(money, toCurrency)), toCurrency);
+        }
+
+        private void CheckExchangeRates(Currency toCurrency)
+        {
+            var missingExchangeRates =
+                Moneys.Select(m => m.Currency)
+                    .Where(c => c != toCurrency)
+                    .Distinct()
+                    .Select(c => KeyFor(c, toCurrency))
+                    .Where(key => !ExchangeRates.ContainsKey(key))
+                    .ToArray();
+
+            if (missingExchangeRates.Any())
+                throw new MissingExchangeRatesException(missingExchangeRates);
+        }
 
         private static double Convert(Money money, Currency currency) =>
             currency == money.Currency

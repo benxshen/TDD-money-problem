@@ -731,3 +731,71 @@ public record Portfolio(params Money[] Moneys)
 Improve error handling when exchange rates are unspecified
 Allow exchange rates to be modified
 ```
+
+### Chapter 10 - Error Handling
+`What error drives our eyes and ears amiss ? - William Shakespeare
+
+#### Error Wish List
+```text
+- The Evaluate method should signal an explicit error when one or more necessary exchange rates ares missing
+- The error message should be "greedy" - indicate all the missing exchange rates
+- To prevent error from being ignored by the caller : no valid Money should be returned when an error happens due to missing exchange rates
+```
+
+* We will use exception here in case of failure
+  * We will use other data structure later (`Either<string,Money>` for example)
+```c#
+[Fact(DisplayName = "Throw greedy exception in case of missing exchange rates")]
+public void AddWithMissingExchangeRatesShouldThrowGreedyException()
+{
+    var portfolio = new Portfolio(1d.Dollars(), 1d.Euros(), 1d.KoreanWons());
+    portfolio.Invoking(p => p.Evaluate(Currency.KRW))
+        .Should()
+        .Throw<MissingExchangeRatesException>()
+        .WithMessage("Missing exchange rate(s): [EUR->KRW]");
+}  
+```
+
+* Create the `MissingExchangeRatesException` class
+```c#
+public class MissingExchangeRatesException : Exception
+{
+    public MissingExchangeRatesException()
+    {
+    }
+} 
+```
+* Add a `CheckExchangeRates` method that will throw a `MissingExchangeRatesException` in case of missing Exchange rates 
+```c#
+public Money Evaluate(Currency toCurrency)
+{
+    CheckExchangeRates(toCurrency);
+    return new Money(Moneys.Aggregate(0d, (acc, money) => acc + Convert(money, toCurrency)), toCurrency);
+}
+
+private void CheckExchangeRates(Currency toCurrency)
+{
+    var missingExchangeRates =
+        Moneys.Select(m => m.Currency)
+            .Where(c => c != toCurrency)
+            .Distinct()
+            .Select(c => KeyFor(c, toCurrency))
+            .Where(key => !ExchangeRates.ContainsKey(key))
+            .ToArray();
+
+    if (missingExchangeRates.Any())
+        throw new MissingExchangeRatesException(missingExchangeRates);
+}
+```
+* Improve our `MissingExchangeRatesException` to create a descriptive message :
+```c#
+public class MissingExchangeRatesException : Exception
+{
+    public MissingExchangeRatesException(string[] missingCurrencies)
+        : base($"Missing exchange rate(s): [{string.Join(",", missingCurrencies)}]")
+    {
+    }
+}
+```
+* Our test is green now
+

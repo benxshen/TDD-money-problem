@@ -32,4 +32,14 @@ public class PortfolioShould
             .Should()
             .Be(2200d.KoreanWons());
     }
+
+    [Fact(DisplayName = "Throw greedy exception in case of missing exchange rates")]
+    public void AddWithMissingExchangeRatesShouldThrowGreedyException()
+    {
+        var portfolio = new Portfolio(1d.Dollars(), 1d.Euros(), 1d.KoreanWons());
+        portfolio.Invoking(p => p.Evaluate(Currency.KRW))
+            .Should()
+            .Throw<MissingExchangeRatesException>()
+            .WithMessage("Missing exchange rate(s): [EUR->KRW]");
+    }
 }
