@@ -771,7 +771,7 @@ public Money Evaluate(Currency toCurrency)
 {
     CheckExchangeRates(toCurrency);
     return new Money(Moneys.Aggregate(0d, (acc, money) => acc + Convert(money, toCurrency)), toCurrency);
-}
+
 
 private void CheckExchangeRates(Currency toCurrency)
 {
@@ -799,3 +799,23 @@ public class MissingExchangeRatesException : Exception
 ```
 * Our test is green now
 
+#### Improve Portfolio instantiation
+* Extension methods can make our future refactoring easiest
+```c#
+public static Portfolio AddToPortfolio(this Money money1, Money money2) => new(money1, money2);
+public static Portfolio AddToPortfolio(this Portfolio portfolio, Money money) => new(portfolio.Moneys.Append(money).ToArray());
+
+// Impact in the tests 
+[Fact(DisplayName = "Throw greedy exception in case of missing exchange rates")]
+public void AddWithMissingExchangeRatesShouldThrowGreedyException()
+{
+    var portfolio = 1d.Dollars()
+        .AddToPortfolio(1d.Euros())
+        .AddToPortfolio(1d.KoreanWons());
+
+    portfolio.Invoking(p => p.Evaluate(Currency.KRW))
+        .Should()
+        .Throw<MissingExchangeRatesException>()
+        .WithMessage("Missing exchange rate(s): [EUR->KRW]");
+} 
+```
