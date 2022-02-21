@@ -16,4 +16,9 @@ class PortfolioShould extends org.scalatest.funsuite.AnyFunSuite {
 
     assert(portfolio.evaluate("USD") === Money(17, "USD"))
   }
+
+  test("1 USD + 1100 KRW = 2200 KRW") {
+    val portfolio = Portfolio(Money(1, "USD"), Money(1100, "KRW"))
+    assert(portfolio.evaluate("KRW") === Money(2200, "KRW"))
+  }
 }
