@@ -23,4 +23,13 @@ public class PortfolioShould
             .Should()
             .Be(17d.Dollars());
     }
+
+    [Fact(DisplayName = "1 USD + 1100 KRW = 2200 KRW")]
+    public void AddDollarsAndKoreanWons()
+    {
+        var portfolio = new Portfolio(1d.Dollars(), 1100d.KoreanWons());
+        portfolio.Evaluate(Currency.KRW)
+            .Should()
+            .Be(2200d.KoreanWons());
+    }
 }
