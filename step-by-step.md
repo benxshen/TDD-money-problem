@@ -613,3 +613,31 @@ public record Portfolio(params Money[] Moneys)
 }
 ```
 
+#### Remove redundancy
+* A cool feature of C# is the ability to declare and use extension methods on primitive types
+* In our tests we instantiate a lot of `Money` objects
+    * Let's instantiate them in a more fluent way thanks to an extension method on `double`
+        * Ex : `2.Dollars()`
+    * It allows us to create true business DSL
+
+```c#
+public static class DomainExtensions
+{
+    public static Money Dollars(this double amount) => new(amount, Currency.USD);
+    public static Money Euros(this double amount) => new(amount, Currency.EUR);
+    public static Money KoreanWons(this double amount) => new(amount, Currency.KRW);
+}
+```
+
+* Let's use it in our tests
+
+```c#
+[Fact(DisplayName = "5 USD + 10 EUR = 17 USD")]
+public void AddDollarsAndEuros()
+{
+    var portfolio = new Portfolio(5d.Dollars(), 10d.Euros());
+    portfolio.Evaluate(Currency.USD)
+        .Should()
+        .Be(17d.Dollars());
+}
+```

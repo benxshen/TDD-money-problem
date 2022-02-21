@@ -9,19 +9,19 @@ namespace money_problem.Tests
         [Fact(DisplayName = "10 EUR x 2 = 20 EUR")]
         public void Multiply()
         {
-            var tenEuros = new Money(10, Currency.EUR);
-            tenEuros.Times(2)
+            10d.Euros()
+                .Times(2)
                 .Should()
-                .Be(new Money(20, Currency.EUR));
+                .Be(20d.Euros());
         }
 
         [Fact(DisplayName = "4002 KRW / 4 = 1000.5 KRW")]
         public void Divide()
         {
-            var originalMoney = new Money(4002, Currency.KRW);
-            originalMoney.Divide(4)
+            4002d.KoreanWons()
+                .Divide(4)
                 .Should()
-                .Be(new Money(1000.5, Currency.KRW));
+                .Be(1000.5d.KoreanWons());
         }
     }
 }
