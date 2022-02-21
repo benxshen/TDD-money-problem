@@ -710,3 +710,24 @@ public record Portfolio(params Money[] Moneys)
     private static string KeyFor(Currency from, Currency to) => $"{from}->{to}";
 }
 ```
+
+* What happens if we try to evaluate in a currency without `exchangeRates` ?
+    * Remove all entries from our `Dictionary`
+    * It fails with the message : `System.Collections.Generic.KeyNotFoundException: The given key 'USD->KRW' was not present in the dictionary.`
+* We need to improve error handling in our code
+  * Let's add it in our feature list
+
+#### Where we are
+```text
+✅ 5 USD x 2 = 10 USD 
+✅ 10 EUR x 2 = 20 EUR
+✅ 4002 KRW / 4 = 1000.5 KRW
+✅ 5 USD + 10 USD = 15 USD
+✅ Separate test code from production code
+✅ Remove redundant tests
+✅ 5 USD + 10 EUR = 17 USD
+✅ 1 USD + 1100 KRW = 2200 KRW
+✅ Determine exchange rate based on the currencies involved (from -> to)
+Improve error handling when exchange rates are unspecified
+Allow exchange rates to be modified
+```
