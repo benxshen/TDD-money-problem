@@ -791,8 +791,8 @@ private void CheckExchangeRates(Currency toCurrency)
 ```c#
 public class MissingExchangeRatesException : Exception
 {
-    public MissingExchangeRatesException(string[] missingCurrencies)
-        : base($"Missing exchange rate(s): [{string.Join(",", missingCurrencies)}]")
+    public MissingExchangeRatesException(string[] missingExchangeRates)
+        : base($"Missing exchange rate(s): [{string.Join(",", missingExchangeRates)}]")
     {
     }
 }
