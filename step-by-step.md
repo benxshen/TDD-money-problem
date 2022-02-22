@@ -839,3 +839,117 @@ public void AddWithMissingExchangeRatesShouldThrowGreedyException()
 Improve the implementation of exchange rates
 Allow exchange rates to be modified
 ```
+### Chapter 11 - Banking on Redesign
+`On the whole it's worth evolving your design as your needs grow... - Martin Fowler`
+
+* Our `Portfolio` does too much work
+  * Its primary job is to be a repository of `Money` entities
+  * Not to manage Exchange Rates
+* Our software program has grown with our needs
+  * It is worth improving our design and looking for a better abstraction
+* A principle of Domain Driven Design is continuous learning
+  * We are missing a key entity
+  * `What is the name of the real-world institution that helps us exchange money ?`
+
+#### Bank concept
+* What should be its responsibility ?
+  * Hold exchange rates
+  * Convert money between currencies
+
+#### Dependency Injection
+* We have identified a new entity
+  * How should the dependencies between `Bank` and the other two existing entities look ?
+  ![Bank class diagram](img/bank-class-diagram.png)
+  * The dependency of `Portfolio` on `Bank` is kept to a minimum
+    * `Bank` is provided as a parameter to the `Evaluate` method
+    * We do `method injection`
+
+#### Putting It All Together
+* Let's write a test to convert one `Money` object into another :
+    * We choose to make an immutable data structure as well
+```c#
+[Fact(DisplayName = "10 EUR -> USD = 12 USD")]
+public void ConvertEuroToUsd()
+{
+    // WithExchangeRates will be our Factory method
+    var bank = Bank.WithExchangeRates(EUR, USD, 1.2);
+
+    bank.Convert(10d.Euros(), USD)
+        .Should()
+        .Be(12d.Dollars());
+}
+```
+* We write the minimum to pass the test
+  * Initialize an empty Dictionary
+  * Forming a key to store the exchange rate
+  * Create the convert method that returns `Money`
+```c#
+public record Bank
+{
+    private readonly ImmutableDictionary<string, double> _exchangeRates;
+
+    private Bank(ImmutableDictionary<string, double> exchangeRates) => _exchangeRates = exchangeRates;
+
+    public static Bank WithExchangeRates(Currency from, Currency to, double rate) =>
+        new Bank(new Dictionary<string, double>().ToImmutableDictionary())
+            .AddExchangeRates(from, to, rate);
+
+    private Bank AddExchangeRates(Currency from, Currency to, double rate) =>
+        new(_exchangeRates.Add(KeyFor(from, to), rate));
+
+    private static string KeyFor(Currency from, Currency to) => $"{from}->{to}";
+
+    public Money Convert(Money money, Currency currency) =>
+        currency == money.Currency
+            ? money
+            : new Money(money.Amount * _exchangeRates[KeyFor(money.Currency, currency)], currency);
+} 
+```
+* We now need to keep existing behavior
+  * Throws a greedy exception on missing exchange rates
+* Let's write a new test
+```c#
+[Fact(DisplayName = "Throw missing exchange rates exception in case of missing exchange rates")]
+public void ConvertWithMissingExchangeRatesShouldThrowException()
+{
+    var portfolio = Bank.WithExchangeRates(EUR, USD, 1.2);
+
+    portfolio.Invoking(p => p.Convert(10d.Euros(), KRW))
+        .Should()
+        .Throw<MissingExchangeRatesException>()
+        .WithMessage("Missing exchange rate(s): [EUR->KRW]");
+}
+```
+* Implement the minimum to pass the test
+```c#
+public record Bank
+{
+    private readonly ImmutableDictionary<string, double> _exchangeRates;
+
+    private Bank(ImmutableDictionary<string, double> exchangeRates) => _exchangeRates = exchangeRates;
+
+    public static Bank WithExchangeRates(Currency from, Currency to, double rate) =>
+        new Bank(new Dictionary<string, double>().ToImmutableDictionary())
+            .AddExchangeRates(from, to, rate);
+
+    private Bank AddExchangeRates(Currency from, Currency to, double rate) =>
+        new(_exchangeRates.Add(KeyFor(from, to), rate));
+
+    private static string KeyFor(Currency from, Currency to) => $"{from}->{to}";
+
+    public Money Convert(Money money, Currency currency)
+    {
+        CheckExchangeRates(money.Currency, currency);
+        return currency == money.Currency
+            ? money
+            : new Money(money.Amount * _exchangeRates[KeyFor(money.Currency, currency)], currency);
+    }
+
+    private void CheckExchangeRates(Currency from, Currency to)
+    {
+        var key = KeyFor(from, to);
+        if (!_exchangeRates.ContainsKey(key))
+            throw new MissingExchangeRatesException(key);
+    }
+}
+```
