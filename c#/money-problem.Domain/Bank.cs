@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace money_problem.Domain
 {
@@ -17,20 +19,17 @@ namespace money_problem.Domain
 
         private static string KeyFor(Currency from, Currency to) => $"{from}->{to}";
 
-        public Money Convert(Money money, Currency currency)
-        {
-            CheckExchangeRates(money.Currency, currency);
-            return currency == money.Currency
-                ? money
-                : new Money(money.Amount * _exchangeRates[KeyFor(money.Currency, currency)], currency);
-        }
+        public Either<string, Money> Convert(Money money, Currency currency) =>
+            CanConvert(money.Currency, currency)
+                ? ConvertSafely(money, currency)
+                : Left(KeyFor(money.Currency, currency));
 
-        private void CheckExchangeRates(Currency from, Currency to)
-        {
-            if (from == to) return;
-            var key = KeyFor(from, to);
-            if (!_exchangeRates.ContainsKey(key))
-                throw new MissingExchangeRateException(key);
-        }
+        private EitherRight<Money> ConvertSafely(Money money, Currency currency) =>
+            Right(currency == money.Currency
+                ? money
+                : new Money(money.Amount * _exchangeRates[KeyFor(money.Currency, currency)], currency));
+
+        private bool CanConvert(Currency from, Currency to) =>
+            from == to || _exchangeRates.ContainsKey(KeyFor(from, to));
     }
 }

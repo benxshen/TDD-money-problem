@@ -1037,4 +1037,93 @@ private void CheckExchangeRates(Currency from, Currency to)
   * Let's commit our work
 
 #### Refactor
-* We have introduced some duplication : 
+* We have introduced some duplication : `MissingExchangeRateException`, `MissingExchangeRatesException`
+* We have a huge try/catch
+  * It could be better to not throw Exception from the `Bank` entity : prefer returning a data structure representing the result of the conversion
+  * Result is either Money or a failure message
+  * Let's use this data structure
+
+* Add nuget package `LanguageExt.Core` for this purpose
+    * Change our tests first :
+```c#
+public class BankShould
+{
+    [Fact(DisplayName = "10 EUR -> USD = 12 USD")]
+    public void ConvertEuroToUsd()
+    {
+        var bank = Bank.WithExchangeRate(EUR, USD, 1.2);
+
+        bank.Convert(10d.Euros(), USD)
+            .RightUnsafe()
+            .Should()
+            .Be(12d.Dollars());
+    }
+
+    [Fact(DisplayName = "10 EUR -> EUR = 10 EUR")]
+    public void ConvertMoneyInTheSameCurrency()
+    {
+        var bank = Bank.WithExchangeRate(EUR, USD, 1.2);
+
+        bank.Convert(10d.Euros(), EUR)
+            .RightUnsafe()
+            .Should()
+            .Be(10d.Euros());
+    }
+
+    [Fact(DisplayName = "Return a Left in case of missing exchange rates")]
+    public void ConvertWithMissingExchangeRateShouldThrowException()
+    {
+        var portfolio = Bank.WithExchangeRate(EUR, USD, 1.2);
+
+        portfolio.Convert(10d.Euros(), KRW)
+            .LeftUnsafe()
+            .Should()
+            .Be("EUR->KRW");
+    }
+} 
+```
+* Create some extensions for Test purpose only
+```c#
+public static class LanguageExtExtensions
+{
+    public static TLeft LeftUnsafe<TLeft, TRight>(this Either<TLeft, TRight> either)
+        => either.LeftToSeq().Single();
+
+    public static TRight RightUnsafe<TLeft, TRight>(this Either<TLeft, TRight> either)
+        => either.RightToSeq().Single();
+}
+```
+* Refactor our production code starting from our Bank
+  * Change the signature of the `Convert` method
+  * Simplify conversion code
+```c#
+public Either<string, Money> Convert(Money money, Currency currency) =>
+    CanConvert(money.Currency, currency)
+        ? ConvertSafely(money, currency)
+        : Left(KeyFor(money.Currency, currency));
+
+private EitherRight<Money> ConvertSafely(Money money, Currency currency) =>
+    Right(currency == money.Currency
+        ? money
+        : new Money(money.Amount * _exchangeRates[KeyFor(money.Currency, currency)], currency));
+
+private bool CanConvert(Currency from, Currency to) =>
+    from == to || _exchangeRates.ContainsKey(KeyFor(from, to)); 
+```
+* Change our `Portfolio` implementation to reflect our changes
+  * No more huge try/catch that can ruin our performance
+```c#
+public Money Evaluate(
+    Bank bank,
+    Currency toCurrency)
+{
+    var convertedMoneys =
+        Moneys
+            .Map(m => bank.Convert(m, toCurrency))
+            .ToList();
+
+    return !convertedMoneys.Lefts().Any()
+        ? new Money(convertedMoneys.Rights().Fold(0d, (acc, money) => acc + money.Amount), toCurrency)
+        : throw new MissingExchangeRatesException(convertedMoneys.Lefts());
+} 
+```

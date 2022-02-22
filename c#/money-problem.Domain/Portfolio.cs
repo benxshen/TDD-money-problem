@@ -6,28 +6,14 @@ namespace money_problem.Domain
             Bank bank,
             Currency toCurrency)
         {
-            var failures = new List<MissingExchangeRateException>();
-            var evaluatedPortfolio = new Money(
-                Moneys.Aggregate(0d, (acc, money) =>
-                {
-                    var convertedMoney = 0d;
+            var convertedMoneys =
+                Moneys
+                    .Map(m => bank.Convert(m, toCurrency))
+                    .ToList();
 
-                    try
-                    {
-                        convertedMoney = bank.Convert(money, toCurrency).Amount;
-                    }
-                    catch (MissingExchangeRateException e)
-                    {
-                        failures.Add(e);
-                    }
-
-                    return acc + convertedMoney;
-                }),
-                toCurrency);
-
-            return failures.Count == 0
-                ? evaluatedPortfolio
-                : throw new MissingExchangeRatesException(failures.Select(e => e.Message));
+            return !convertedMoneys.Lefts().Any()
+                ? new Money(convertedMoneys.Rights().Fold(0d, (acc, money) => acc + money.Amount), toCurrency)
+                : throw new MissingExchangeRatesException(convertedMoneys.Lefts());
         }
     }
 }

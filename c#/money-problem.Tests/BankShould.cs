@@ -13,6 +13,7 @@ namespace money_problem.Tests
             var bank = Bank.WithExchangeRate(EUR, USD, 1.2);
 
             bank.Convert(10d.Euros(), USD)
+                .RightUnsafe()
                 .Should()
                 .Be(12d.Dollars());
         }
@@ -23,19 +24,20 @@ namespace money_problem.Tests
             var bank = Bank.WithExchangeRate(EUR, USD, 1.2);
 
             bank.Convert(10d.Euros(), EUR)
+                .RightUnsafe()
                 .Should()
                 .Be(10d.Euros());
         }
 
-        [Fact(DisplayName = "Throw missing exchange rate exception in case of missing exchange rates")]
+        [Fact(DisplayName = "Return a Left in case of missing exchange rates")]
         public void ConvertWithMissingExchangeRateShouldThrowException()
         {
             var portfolio = Bank.WithExchangeRate(EUR, USD, 1.2);
 
-            portfolio.Invoking(p => p.Convert(10d.Euros(), KRW))
+            portfolio.Convert(10d.Euros(), KRW)
+                .LeftUnsafe()
                 .Should()
-                .Throw<MissingExchangeRateException>()
-                .WithMessage("EUR->KRW");
+                .Be("EUR->KRW");
         }
     }
 }
