@@ -32,9 +32,9 @@ namespace money_problem.Tests
         [Fact(DisplayName = "Return a Left in case of missing exchange rates")]
         public void ConvertWithMissingExchangeRateShouldThrowException()
         {
-            var portfolio = Bank.WithExchangeRate(EUR, USD, 1.2);
+            var bank = Bank.WithExchangeRate(EUR, USD, 1.2);
 
-            portfolio.Convert(10d.Euros(), KRW)
+            bank.Convert(10d.Euros(), KRW)
                 .LeftUnsafe()
                 .Should()
                 .Be("EUR->KRW");

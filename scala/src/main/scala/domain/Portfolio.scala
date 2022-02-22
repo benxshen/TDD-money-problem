@@ -1,45 +1,20 @@
 package domain
 
-import domain.Portfolio.{exchangeRates, keyFor}
-
 case class Portfolio(moneys: Money*) {
-  def evaluate(toCurrency: String): Either[String, Money] = {
-    val missingExchangeRates: Seq[String] = missingExchangeRatesFor(toCurrency)
+  def evaluate(bank: Bank, toCurrency: String): Either[String, Money] = {
+    val convertedMoneys = moneys.map(bank.convert(_, toCurrency))
+    val lefts = convertedMoneys.collect { case Left(x) => x }
 
-    if (missingExchangeRates.nonEmpty)
-      Left(
-        missingExchangeRates.mkString("Missing exchange rate(s): [", ",", "]")
-      )
-    else
+    if (lefts.isEmpty)
       Right(
         Money(
-          moneys.foldLeft(0d)((acc, money) => acc + convert(money, toCurrency)),
+          convertedMoneys
+            .collect { case Right(x) => x }
+            .foldLeft(0d)((acc, money) => acc + money.amount),
           toCurrency
         )
       )
+    else
+      Left(lefts.mkString("Missing exchange rate(s): [", ",", "]"))
   }
-
-  private def missingExchangeRatesFor(toCurrency: String) = {
-    val missingExchangeRates =
-      moneys
-        .map(_.currency)
-        .filter(_ != toCurrency)
-        .distinct
-        .map(keyFor(_, toCurrency))
-        .filter(!exchangeRates.contains(_))
-    missingExchangeRates
-  }
-
-  def convert(money: Money, currency: String): Double =
-    if (currency == money.currency) money.amount
-    else money.amount * exchangeRates(keyFor(money.currency, currency))
-}
-
-object Portfolio {
-  private val exchangeRates: Map[String, Double] = Map(
-    (keyFor("EUR", "USD"), 1.2),
-    (keyFor("USD", "KRW"), 1100)
-  )
-
-  private def keyFor(from: String, to: String): String = s"$from->$to"
 }
