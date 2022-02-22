@@ -10,7 +10,7 @@ namespace money_problem.Domain
         {
         }
 
-        public MissingExchangeRatesException(string[] missingExchangeRates)
+        public MissingExchangeRatesException(params string[] missingExchangeRates)
             : base($"Missing exchange rate(s): [{string.Join(",", missingExchangeRates)}]")
         {
         }
