@@ -909,14 +909,14 @@ public record Bank
   * Throws a greedy exception on missing exchange rates
 * Let's write a new test
 ```c#
-[Fact(DisplayName = "Throw missing exchange rates exception in case of missing exchange rates")]
-public void ConvertWithMissingExchangeRatesShouldThrowException()
+[Fact(DisplayName = "Throw missing exchange rate exception in case of missing exchange rates")]
+public void ConvertWithMissingExchangeRateShouldThrowException()
 {
     var portfolio = Bank.WithExchangeRates(EUR, USD, 1.2);
 
     portfolio.Invoking(p => p.Convert(10d.Euros(), KRW))
         .Should()
-        .Throw<MissingExchangeRatesException>()
+        .Throw<MissingExchangeRateException>()
         .WithMessage("Missing exchange rate(s): [EUR->KRW]");
 }
 ```
@@ -949,7 +949,92 @@ public record Bank
     {
         var key = KeyFor(from, to);
         if (!_exchangeRates.ContainsKey(key))
-            throw new MissingExchangeRatesException(key);
+            throw new MissingExchangeRateException(key);
     }
 }
 ```
+* All our tests are green
+  * We are ready to change our `Portfolio.Evaluate` method
+    * Inject the `Bank` and delegate `conversion` to it
+  * We make the minimum to implement it
+```c#
+public record Portfolio(params Money[] Moneys)
+{
+    public Money Evaluate(
+        Bank bank,
+        Currency toCurrency)
+    {
+        var failures = new List<MissingExchangeRateException>();
+        var evaluatedPortfolio = new Money(
+            Moneys.Aggregate(0d, (acc, money) =>
+            {
+                var convertedMoney = 0d;
+
+                try
+                {
+                    convertedMoney = bank.Convert(money, toCurrency).Amount;
+                }
+                catch (MissingExchangeRateException e)
+                {
+                    failures.Add(e);
+                }
+
+                return acc + convertedMoney;
+            }),
+            toCurrency);
+
+        return failures.Count == 0
+            ? evaluatedPortfolio
+            : throw new MissingExchangeRatesException(failures.Select(e => e.Message));
+    }
+}
+```
+* Our `Portfolio` tests do not compile anymore
+  * We need to inject our `Bank` entity
+```c#
+// We setup it for all our tests
+private readonly Bank _bank =
+    Bank.WithExchangeRate(EUR, USD, 1.2)
+        .AddExchangeRate(USD, KRW, 1100);
+
+[Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
+public void Add()
+{
+    var portfolio = 5d.Dollars().AddToPortfolio(10d.Dollars());
+    // Inject the bank through method injection
+    portfolio.Evaluate(_bank, USD)
+        .Should()
+        .Be(15d.Dollars());
+}
+```
+* We now run the tests
+    * Sh** I have introduced a regression
+![Bank regression](img/bank-regression.png)
+    * We can not convert from one currency to the same currency anymore
+* Let's add a test on it to ensure the regression will never come back
+```c#
+[Fact(DisplayName = "10 EUR -> EUR = 10 EUR")]
+public void ConvertMoneyInTheSameCurrency()
+{
+    var bank = Bank.WithExchangeRate(EUR, USD, 1.2);
+
+    bank.Convert(10d.Euros(), EUR)
+        .Should()
+        .Be(10d.Euros());
+}
+```
+* Now we can fix this regression
+```c#
+private void CheckExchangeRates(Currency from, Currency to)
+{
+    if (from == to) return;
+    var key = KeyFor(from, to);
+    if (!_exchangeRates.ContainsKey(key))
+        throw new MissingExchangeRateException(key);
+}
+```
+* Every tests are now green
+  * Let's commit our work
+
+#### Refactor
+* We have introduced some duplication : 
