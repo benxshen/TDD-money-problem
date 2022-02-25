@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\money-problem.Domain\money-problem.Domain.csproj" />
+    <ProjectReference Include="..\money-problem.Domain\money-problem.Domain.fsproj" />
   </ItemGroup>
 
 </Project>

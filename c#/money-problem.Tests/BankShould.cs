@@ -1,13 +1,13 @@
 using FluentAssertions;
 using money_problem.Domain;
 using Xunit;
-using static money_problem.Domain.Currency;
+using static money_problem.Domain.Types.Currency;
 
 namespace money_problem.Tests
 {
     public class BankShould
     {
-        private readonly Bank _bank = Bank.WithExchangeRate(EUR, USD, 1.2);
+        private readonly Types.Bank _bank = Bank.WithExchangeRate(EUR, USD, 1.2);
 
         [Fact(DisplayName = "10 EUR -> USD = 12 USD")]
         public void ConvertEuroToUsd()

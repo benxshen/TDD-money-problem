@@ -1,13 +1,14 @@
+using System;
 using FluentAssertions;
 using money_problem.Domain;
 using Xunit;
-using static money_problem.Domain.Currency;
+using static money_problem.Domain.Types.Currency;
 
 namespace money_problem.Tests
 {
     public class PortfolioShould
     {
-        private readonly Bank _bank =
+        private readonly Types.Bank _bank =
             Bank.WithExchangeRate(EUR, USD, 1.2)
                 .AddExchangeRate(USD, KRW, 1100);
 
@@ -46,7 +47,7 @@ namespace money_problem.Tests
         {
             var portfolio = 1d.Dollars()
                 .AddToPortfolio(1d.Euros())
-                .AddToPortfolio(1d.KoreanWons());
+                .Add(1d.KoreanWons());
 
             portfolio.Evaluate(_bank, KRW)
                 .LeftUnsafe()

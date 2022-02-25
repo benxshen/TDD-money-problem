@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>money_problem.Domain</RootNamespace>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Banking.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LanguageExt.FSharp" Version="4.0.3" />
+    </ItemGroup>
+
+</Project>
