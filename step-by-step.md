@@ -1283,3 +1283,21 @@ new(_exchangeRates.SetItem(KeyFor(from, to), rate));
 ```
 
 ### Chapter 13 - Continuous Integration
+> With continuous integration, your software is proven to work (assuming a sufficiently comprehensive set of automated tests) with every new change-and you now the moment it breaks and can fix it immediately - *Jez Humble and David Farley*
+
+* Software entropy is the principle that the degree of disorder in a system tends to increase over time
+* Our best current defense against the ruinous effect of code chaos is `Continuous Delivery`
+![Continuous Integration](img/continuous-integration.png)
+
+#### Putting It All Together
+* We'll use GitHub Actions to add continuous integration to our project
+* Here are the steps to build a CI Pipeline for our code :
+
+```
+1. Create and/or verify our GitHub account
+2. Create a new project in GitHub
+3. Push our code repository to GitHub
+4. Prepare the source code for CI build scripts
+5. Create a CI build script for our language (C# here)
+6. Push the build scripts to GitHub
+```
