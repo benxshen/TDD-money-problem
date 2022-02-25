@@ -15,7 +15,7 @@ namespace money_problem.Domain
                 .AddExchangeRate(from, to, rate);
 
         public Bank AddExchangeRate(Currency from, Currency to, double rate) =>
-            new(_exchangeRates.Add(KeyFor(from, to), rate));
+            new(_exchangeRates.SetItem(KeyFor(from, to), rate));
 
         private static string KeyFor(Currency from, Currency to) => $"{from}->{to}";
 
