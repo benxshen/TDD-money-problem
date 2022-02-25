@@ -1378,4 +1378,9 @@ Instability = efferent / efferent + afferent
 #### Process
 * Assess the process of how we got to the final version of our code
 
+* Reflect on your own code
+* What could be said about it regarding the 3P ?
+* What surprised you during this workshop ?
+* What have been your discoveries ?
+
 `Thanks for having followed it and thanks Saleem for this great book`
