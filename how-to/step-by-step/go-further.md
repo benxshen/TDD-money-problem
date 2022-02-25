@@ -133,5 +133,3 @@ module Portfolio =
 * What do you think about F# ?
 * What are your discoveries ?
 * What do you think about Interop between the 2 languages ?
-
-[step by step guide](step-by-step/go-further.md)
