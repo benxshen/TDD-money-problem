@@ -56,6 +56,7 @@ This is a [monorepo](https://trunkbaseddevelopment.com/monorepos/) containing al
     * [Part 2 - Modularization](how-to/Part2.md)
     * [Part 3 - Features and Redesign](how-to/Part3.md)
     * [Part 4 - Finishing Up](how-to/Part4.md)
+    * [Go Further](how-to/Go-Further.md)
 
 * Each part contains chapters in a step-by-step approach
   * At the end of each chapter you will find a `step by step guide` link
