@@ -67,13 +67,12 @@ module Money =
     let divide(money, divisor): Money = { money with Amount = money.Amount / divisor }
     
     // Extension methods
-    type Double with
-        [<CompiledName("Dollars"); Extension>] 
-        member money.dollars(): Money = { Amount = money; Currency = USD  }
-        [<CompiledName("Euros"); Extension>]
-        member money.euros(): Money = { Amount = money; Currency = EUR  }
-        [<CompiledName("KoreanWons"); Extension>]
-        member money.koreanWons(): Money = { Amount = money; Currency = KRW  }
+    [<CompiledName("Dollars"); Extension>]
+    let dollars (amount: Double) : Money = { Amount = amount; Currency = USD }
+    [<CompiledName("Euros"); Extension>]
+    let euros (amount: Double) : Money = { Amount = amount; Currency = EUR }
+    [<CompiledName("KoreanWons"); Extension>]
+    let koreanWons (amount: Double) : Money = { Amount = amount; Currency = KRW }
 ```
 * Create the `Bank` module
   * We want to have the least impact on our test code
