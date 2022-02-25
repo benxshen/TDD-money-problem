@@ -1301,3 +1301,29 @@ new(_exchangeRates.SetItem(KeyFor(from, to), rate));
 5. Create a CI build script for our language (C# here)
 6. Push the build scripts to GitHub
 ```
+
+```yaml
+name: C# CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: ['6.0.x' ]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore c#
+      - name: Build
+        run: dotnet build --configuration Release --no-restore c#
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal c#
+```
