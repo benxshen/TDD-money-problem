@@ -57,24 +57,20 @@ module Bank =
               ExchangeRates = bank.ExchangeRates.Add(keyFor (fromCurrency, toCurrency), rate) }
 
     let private convertSafely (bank: Bank, money: Money, currency: Currency) =
-        if (money.Currency = currency) then
-            money
-        else
-            Money.from (
-                money.Amount
-                * bank.ExchangeRates.[keyFor (money.Currency, currency)],
-                currency
-            )
+        Money.from (
+            money.Amount
+            * bank.ExchangeRates.[keyFor (money.Currency, currency)],
+            currency
+        )
 
     [<CompiledName("Convert"); Extension>]
     let convert (bank: Bank, money: Money, toCurrency: Currency) : Either<string, Money> =
         let exchangeKey = keyFor (money.Currency, toCurrency)
 
         match money.Currency with
-        | c when c = toCurrency -> money
+        | from when from = toCurrency -> money
         | _ when bank.ExchangeRates.ContainsKey(exchangeKey) -> convertSafely (bank, money, toCurrency)
         | _ -> exchangeKey
-
 
 [<Extension>]
 module Portfolio =
