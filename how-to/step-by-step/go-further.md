@@ -1,6 +1,6 @@
 # Go Further
 * Our `Domain` is fully `Functional`
-  ![Functional Core Imperative Shell](../img/functional-core-imperative-shell.png)
+  ![Functional Core Imperative Shell](../../img/functional-core-imperative-shell.png)
 * Know more about it [here](https://www.youtube.com/watch?v=yTkzNHF6rMs&ab_channel=Confreaks)
 
 > Could we benefit from using a functional language ?
