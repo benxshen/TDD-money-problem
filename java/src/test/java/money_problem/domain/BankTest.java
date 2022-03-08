@@ -34,4 +34,17 @@ class BankTest {
                 .getLeft())
                 .isEqualTo("EUR->KRW");
     }
+
+    @Test
+    @DisplayName("Conversion with different exchange rates EUR to USD")
+    void shouldConvertWithDifferentExchangeRates() {
+        assertThat(bank.convert(euros(10), USD)
+                .get())
+                .isEqualTo(dollars(12));
+
+        assertThat(bank.addExchangeRate(EUR, USD, 1.3)
+                .convert(euros(10), USD)
+                .get())
+                .isEqualTo(dollars(13));
+    }
 }
