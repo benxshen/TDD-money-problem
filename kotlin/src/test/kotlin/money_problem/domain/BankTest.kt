@@ -30,4 +30,19 @@ class BankTest {
                 .leftUnsafe()
         ).isEqualTo("EUR->KRW")
     }
+
+    @Test
+    fun `Conversion with different exchange rates EUR to USD`() {
+        assertThat(
+            bank.convert(10.0.euros(), USD)
+                .rightUnsafe()
+        ).isEqualTo(12.0.dollars())
+
+        assertThat(
+            bank.addExchangeRate(EUR, USD, 1.3)
+                .convert(10.0.euros(), USD)
+                .rightUnsafe()
+        ).isEqualTo(13.0.dollars())
+
+    }
 }
