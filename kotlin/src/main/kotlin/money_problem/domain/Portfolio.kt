@@ -9,8 +9,24 @@ private val exchangeRates = mapOf(
 
 data class Portfolio(val moneys: List<Money>)
 
-fun Portfolio.evaluate(currency: Currency): Money =
-    Money(moneys.fold(0.0) { acc, money -> acc + convert(money, currency) }, currency)
+@Throws(MissingExchangeRatesException::class)
+fun Portfolio.evaluate(toCurrency: Currency): Money {
+    val missingExchangeRates = missingExchangeRates(toCurrency)
+
+    if (missingExchangeRates.isNotEmpty())
+        throw MissingExchangeRatesException(missingExchangeRates)
+
+    return Money(moneys.fold(0.0) { acc, money -> acc + convert(money, toCurrency) }, toCurrency)
+}
+
+private fun Portfolio.missingExchangeRates(toCurrency: Currency): List<String> =
+    moneys.asSequence()
+        .map { it.currency }
+        .filter { it != toCurrency }
+        .distinct()
+        .map { keyFor(it, toCurrency) }
+        .filter { !exchangeRates.containsKey(it) }
+        .toList()
 
 private fun convert(money: Money, currency: Currency): Double =
     if (currency == money.currency) money.amount
