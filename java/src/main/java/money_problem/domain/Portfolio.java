@@ -1,18 +1,30 @@
 package money_problem.domain;
 
+import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
+import io.vavr.collection.Map;
 
-public record Portfolio(Money... moneys) {
-    private static final double EURO_TO_USD = 1.2;
+import static money_problem.domain.Currency.*;
 
-    public Money evaluate(Currency currency) {
-        return new Money(List.of(moneys)
-                .foldLeft(0d, (acc, money) -> acc + convert(money, currency)), currency);
+public class Portfolio {
+    private final List<Money> moneys;
+    private final Map<String, Double> exchangeRates = HashMap.of(keyFor(EUR, USD), 1.2, keyFor(USD, KRW), 1100d);
+
+    public Portfolio(Money... moneys) {
+        this.moneys = List.of(moneys);
     }
 
-    private static double convert(Money money, Currency currency) {
+    public Money evaluate(Currency currency) {
+        return new Money(moneys.foldLeft(0d, (acc, money) -> acc + convert(money, currency)), currency);
+    }
+
+    private double convert(Money money, Currency currency) {
         return currency == money.currency()
                 ? money.amount()
-                : money.amount() * EURO_TO_USD;
+                : money.amount() * exchangeRates.getOrElse(keyFor(money.currency(), currency), 0d);
+    }
+
+    private static String keyFor(Currency from, Currency to) {
+        return from + "->" + to;
     }
 }

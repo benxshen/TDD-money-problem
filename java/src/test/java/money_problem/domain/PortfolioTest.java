@@ -3,9 +3,9 @@ package money_problem.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static money_problem.domain.Currency.KRW;
 import static money_problem.domain.Currency.USD;
-import static money_problem.domain.MoneyFactory.dollars;
-import static money_problem.domain.MoneyFactory.euros;
+import static money_problem.domain.MoneyFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PortfolioTest {
@@ -23,5 +23,13 @@ class PortfolioTest {
         assertThat(new Portfolio(dollars(5), euros(10))
                 .evaluate(USD))
                 .isEqualTo(dollars(17));
+    }
+
+    @Test
+    @DisplayName("1 USD + 1100 KRW = 2200 KRW")
+    void shouldAddMoneyInDollarsAndKoreanWons() {
+        assertThat(new Portfolio(dollars(1), koreanWons(1100))
+                .evaluate(KRW))
+                .isEqualTo(koreanWons(2200));
     }
 }
