@@ -3,8 +3,8 @@ package money_problem.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static money_problem.domain.MoneyFactory.euros;
-import static money_problem.domain.MoneyFactory.koreanWons;
+import static money_problem.domain.DomainExtensions.euros;
+import static money_problem.domain.DomainExtensions.koreanWons;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MoneyTest {
