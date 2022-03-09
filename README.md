@@ -3,7 +3,7 @@
     * [Learning Test-Driven Development](https://www.oreilly.com/library/view/learning-test-driven-development/9781098106461/)
         * The book explains the different concepts in 3 languages : Go, Python, JS
         * Thanks Saleem for your great sharing
-* You will find other languages in this repository : `C#`, `scala`, `Kotlin`
+* You will find other languages in this repository : `C#`, `java`, `scala`, `Kotlin`, `F#`
     * I have chosen to make a step-by-step guide from the book in `C#`
 
 [![img/Learning-Test-Driven-Development.jpg](img/Learning-Test-Driven-Development.jpg)](https://www.oreilly.com/library/view/learning-test-driven-development/9781098106461/)
