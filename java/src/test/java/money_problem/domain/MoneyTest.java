@@ -5,6 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/*
+ * TODO: TDD 待辦清單
+ *  - [ ] $5 + 10CHF = $10 (rate of 2:1)
+ *  - [V] $5 * 2 = $10
+ *  - [ ] Make “amount” private
+ *  - [ ] 幣別的 times() 讓 amount 倍數增長，這樣正確嗎?  Dollar side-effects?
+ *  - [ ] 是否該考慮 Money rounding?
+ */
 class MoneyTest {
     @Test
     @DisplayName("5 USD x 2 = 10 USD")
