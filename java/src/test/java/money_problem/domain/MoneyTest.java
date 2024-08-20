@@ -8,10 +8,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MoneyTest {
     @Test
     @DisplayName("5 USD x 2 = 10 USD")
-    void shouldMultiply() {
-        Dollar fiver = new Dollar(5);
-        Dollar tenner = fiver.times(2);
+    void testMultiplication() {
+        Dollar five = new Dollar(5);
+        five.times(2);
 
-        assertThat(tenner.amount()).isEqualTo(10);
+        assertThat(five.amount).isEqualTo(10);
     }
 }
