@@ -12,8 +12,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  *  - [ ] Make “amount” private
  *  - [V] 幣別的 times() 讓 amount 倍數增長，這樣正確嗎?  Dollar side-effects?
  *  - [ ] 是否該考慮 Money rounding?
- *  - [>] equals()
+ *  - [V] equals()
  *  - [ ] hashCode()
+ *  - [ ] Equal null
+ *  - [ ] Equal object
  */
 class MoneyTest {
     @Test
