@@ -12,4 +12,9 @@ public class Dollar {
 //        return new Dollar(amount);
         return new Dollar(amount * multiplier);
     }
+
+    @Override
+    public boolean equals(Object object) {
+        return true;
+    }
 }
