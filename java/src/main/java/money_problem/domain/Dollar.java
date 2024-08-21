@@ -8,7 +8,8 @@ public class Dollar {
     }
 
     public Dollar times(int multiplier) {
-        amount *= multiplier;
-        return null;
+//        amount *= multiplier;
+//        return new Dollar(amount);
+        return new Dollar(amount * multiplier);
     }
 }
