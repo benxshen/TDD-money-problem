@@ -12,6 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  *  - [ ] Make “amount” private
  *  - [V] 幣別的 times() 讓 amount 倍數增長，這樣正確嗎?  Dollar side-effects?
  *  - [ ] 是否該考慮 Money rounding?
+ *  - [>] equals()
+ *  - [ ] hashCode()
  */
 class MoneyTest {
     @Test
@@ -25,5 +27,11 @@ class MoneyTest {
 
         product = five.times(3);
         assertThat(product.amount).isEqualTo(15);
+    }
+
+    @Test
+    @DisplayName("Dollar equality: equals()")
+    void testEquality() {
+        assertThat(new Dollar(5)).isEqualTo(new Dollar(5));
     }
 }
